@@ -4,6 +4,7 @@ import com.myproject.jpademo.commons.dto.Response;
 import com.myproject.jpademo.commons.dto.RestResponseEntity;
 import com.myproject.jpademo.core.dto.CreateProductDto;
 import com.myproject.jpademo.core.dto.ProductDto;
+import com.myproject.jpademo.services.KafkaProducerService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ import java.util.List;
 public class ProductController {
 	@Autowired
 	ProductImplementation services;
+	@Autowired
+	private KafkaProducerService producer;
 
 
 @Operation(summary = "Get Product by Id")
@@ -72,4 +75,17 @@ public class ProductController {
 				.setMetadata(metadata);
 		return RestResponseEntity.getResponse(response,HttpStatus.OK);
 	}
+
+	@Operation(summary = "publishing data to kafka")
+	@PostMapping("/send-message")
+	public ResponseEntity<Response<String>> pushDataToKafka(@RequestParam String key,
+															@RequestParam String message){
+	producer.sendMessage(key,message);
+		return RestResponseEntity.getResponse(Response.<String>ok()
+				.setPayload(String.format("message send to kafka %s=%s",key,message)),HttpStatus.OK);
+
+	}
 }
+
+
+
