@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 import com.myproject.jpademo.repository.ProductRepo;
 import com.myproject.jpademo.services.ProductService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
@@ -69,6 +71,9 @@ public class ProductImplementation implements ProductService {
 		Sort sort = Sort.by("id");
 		PageRequest pageRequest = PageRequest.of(page, size, sort);
 		Page<Product> pages = repos.findAll(pageRequest);
+
+		Map<Integer, Integer> map = new HashMap<>();
+		map.put(1, 2);
 		return pages.map(productMapper::toDto);
 
 	}
